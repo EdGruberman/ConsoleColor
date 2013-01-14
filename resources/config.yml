@@ -1,0 +1,15 @@
+log-level: INFO
+show-codes: false
+pattern: '{0} [{1}] {2}' # 0 = Server Timestamp, 1 = Level Name, 2 = Message, 3 = Level Value, 4 = Record Date
+levels: # 0 = Level Name
+  SEVERE: '§c{0}§r'
+  WARNING: '§e{0}§r'
+  INFO: '§8{0}§r'
+  CONFIG: '§3{0}§r'
+  FINE: '§6{0}§r'
+  FINER: '§6{0}§r'
+  FINEST: '§6{0}§r'
+  (default): '{0}'
+reload: '§f-> §2Reloaded §7{1} plugin'
+format-code: '§'
+version: @VERSION@

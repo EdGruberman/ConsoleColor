@@ -1,0 +1,16 @@
+name: ConsoleColor
+version: @VERSION@
+description: Translate Minecraft formatting codes into ANSI codes for console log display
+author: EdGruberman (ed@rjump.com)
+website: http://github.com/EdGruberman/ConsoleColor
+main: edgruberman.bukkit.consolecolor.Main
+load: STARTUP
+commands:
+  'consolecolor:reload':
+    description: Reload ConsoleColor plugin
+    permission: consolecolor.reload
+    usage: '§f-> §7Usage: §b/<command>'
+permissions:
+  consolecolor.reload:
+    description: Can use reload command
+    default: op
