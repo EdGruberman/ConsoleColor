@@ -9,6 +9,7 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
 
 public class AnsiColor {
+
     private static final Map<ChatColor, String> replacements = new EnumMap<ChatColor, String>(ChatColor.class);
 
     static {

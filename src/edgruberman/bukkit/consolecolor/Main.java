@@ -29,8 +29,8 @@ public final class Main extends CustomPlugin {
     @Override
     public void onEnable() {
         if (!this.first) this.enable();
-        this.loadCommands();
         this.first = false;
+        this.getCommand("consolecolor:reload").setExecutor(new Reload(this));
     }
 
     private void enable() {
@@ -52,7 +52,7 @@ public final class Main extends CustomPlugin {
         final ConsoleLogFormatter custom = new ConsoleLogFormatter(this.getConfig().getString("pattern")
                 , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"), this.getConfig().getString("format-code").charAt(0));
 
-        // load levels patterns from config
+        // load level patterns from config
         final ConfigurationSection levels = this.getConfig().getConfigurationSection("levels");
         if (levels != null)
             for (final String name : levels.getKeys(false))
@@ -66,10 +66,6 @@ public final class Main extends CustomPlugin {
         this.handler = cb.consoleHandler();
         this.original = this.handler.getFormatter();
         this.handler.setFormatter(custom);
-    }
-
-    private void loadCommands() {
-        this.getCommand("consolecolor:reload").setExecutor(new Reload(this));
     }
 
     @Override
