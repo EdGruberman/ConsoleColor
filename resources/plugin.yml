@@ -2,7 +2,7 @@ name: ConsoleColor
 version: @VERSION@
 description: Translate Minecraft formatting codes into ANSI codes for console log display
 author: EdGruberman (ed@rjump.com)
-website: http://github.com/EdGruberman/ConsoleColor
+website: http://dev.bukkit.org/server-mods/consolecolor
 main: edgruberman.bukkit.consolecolor.Main
 load: STARTUP
 commands:
