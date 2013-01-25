@@ -43,13 +43,13 @@ public class ConsoleLogFormatter extends Formatter {
     // ---- instance ----
 
     private final Map<Level, String> levelPatterns = new HashMap<Level, String>();
-    private final String pattern;
+    private final MessageFormat pattern;
     private final SimpleDateFormat stamp;
     private final boolean showCodes;
     private final char formatCode;
 
     public ConsoleLogFormatter(final String pattern, final SimpleDateFormat stamp, final boolean showCodes, final char formatCode) {
-        this.pattern = ChatColor.translateAlternateColorCodes(formatCode, pattern);
+        this.pattern = new MessageFormat(AnsiColor.translate(ChatColor.translateAlternateColorCodes(formatCode, pattern)));
         this.stamp = stamp;
         this.showCodes = showCodes;
         this.formatCode = formatCode;
@@ -59,13 +59,14 @@ public class ConsoleLogFormatter extends Formatter {
     @Override
     public String format(final LogRecord record) {
         // 0 = Record Date, 1 = Level Name, 2 = Message, 3 = Level Value, 4 = Server Timestamp
-        final String message = MessageFormat.format(AnsiColor.translate(this.pattern)
-                , new Date(record.getMillis())
-                , this.formatLevel(record.getLevel())
-                , this.formatMessage(record)
-                , record.getLevel().intValue()
-                , this.stamp.format(record.getMillis())
-        );
+        final Object[] arguments = new Object[] {
+                new Date(record.getMillis())
+              , this.formatLevel(record.getLevel())
+              , this.formatMessage(record)
+              , record.getLevel().intValue()
+              , this.stamp.format(record.getMillis())
+        };
+        final String message = this.pattern.format(arguments);
 
         StringWriter trace = null;
         if (record.getThrown() != null) {
