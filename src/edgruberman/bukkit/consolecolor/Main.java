@@ -22,7 +22,7 @@ public final class Main extends CustomPlugin {
 
     @Override
     public void onLoad() {
-        this.putConfigMinimum("0.0.0b0");
+        this.putConfigMinimum("1.1.0");
         this.enable();
     }
 
@@ -49,8 +49,10 @@ public final class Main extends CustomPlugin {
         this.reloadConfig();
         Main.courier = ConfigurationCourier.Factory.create(this).setFormatCode("format-code").build();
 
+        this.handler = cb.consoleHandler();
+        this.original = this.handler.getFormatter();
         final ConsoleLogFormatter custom = new ConsoleLogFormatter(Main.courier.translate("pattern")
-                , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"));
+                , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"), this.original);
 
         // load level patterns from config
         final ConfigurationSection levels = this.getConfig().getConfigurationSection("levels");
@@ -63,8 +65,6 @@ public final class Main extends CustomPlugin {
                 }
 
         // substitute custom Formatter
-        this.handler = cb.consoleHandler();
-        this.original = this.handler.getFormatter();
         this.handler.setFormatter(custom);
     }
 

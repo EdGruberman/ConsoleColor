@@ -45,11 +45,13 @@ public class ConsoleLogFormatter extends Formatter {
     private final MessageFormat pattern;
     private final SimpleDateFormat stamp;
     private final boolean showCodes;
+    private final Formatter original;
 
-    public ConsoleLogFormatter(final String pattern, final SimpleDateFormat stamp, final boolean showCodes) {
+    public ConsoleLogFormatter(final String pattern, final SimpleDateFormat stamp, final boolean showCodes, final Formatter original) {
         this.pattern = new MessageFormat(AnsiColor.translate(pattern));
         this.stamp = stamp;
         this.showCodes = showCodes;
+        this.original = original;
         this.putLevel(ConsoleLogFormatter.LEVEL_DEFAULT, ConsoleLogFormatter.DEFAULT_LEVEL_PATTERN);
     }
 
@@ -71,8 +73,16 @@ public class ConsoleLogFormatter extends Formatter {
         };
 
         final StringWriter message = new StringWriter();
-        message.write(this.pattern.format(arguments));
-        message.write("\n");
+        try {
+            message.write(this.pattern.format(arguments));
+            message.write("\n");
+        } catch (final Exception e) {
+            message.write("    [ConsoleColor] Using original formatter due to error: ");
+            message.write(e.toString());
+            message.write("\n");
+            message.write(this.original.format(record));
+            return message.toString();
+        }
 
         if (record.getThrown() != null) {
             record.getThrown().printStackTrace(new PrintWriter(message));
