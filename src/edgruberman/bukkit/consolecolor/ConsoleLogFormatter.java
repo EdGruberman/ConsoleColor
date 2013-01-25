@@ -120,8 +120,9 @@ public class ConsoleLogFormatter extends Formatter {
         final LogRecord details = new LogRecord(CustomLevel.DEBUG, "[{0}] pattern: {1}");
         message.write(this.originalFormat(details, prefix, this.pattern.toPattern()));
 
+        if (!this.plugin.getLogger().isLoggable(CustomLevel.TRACE)) return;
         for (int i = 0; i < arguments.length; i++) {
-            final LogRecord arg = new LogRecord(CustomLevel.DEBUG, "[{0}] argument '{'{1}} {2}: {3}");
+            final LogRecord arg = new LogRecord(CustomLevel.TRACE, "[{0}] argument '{'{1}} {2}: {3}");
             message.write(this.originalFormat(arg, prefix, i, arguments[i].getClass().getName(), arguments[i].toString()));
         }
     }

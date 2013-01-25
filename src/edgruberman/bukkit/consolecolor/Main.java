@@ -22,7 +22,7 @@ public final class Main extends CustomPlugin {
 
     @Override
     public void onLoad() {
-        this.putConfigMinimum("1.1.0");
+        this.putConfigMinimum("1.2.0");
         this.enable();
     }
 
