@@ -1,6 +1,6 @@
 log-level: INFO
 show-codes: false
-pattern: '{0} [{1}] {2}' # 0 = Server Timestamp, 1 = Level Name, 2 = Message, 3 = Level Value, 4 = Record Date
+pattern: '{4} [{1}] {2}' # 0 = Record Date, 1 = Level Name, 2 = Message, 3 = Level Value, 4 = Server Timestamp
 levels: # 0 = Level Name
   SEVERE: '§c{0}§r'
   WARNING: '§e{0}§r'

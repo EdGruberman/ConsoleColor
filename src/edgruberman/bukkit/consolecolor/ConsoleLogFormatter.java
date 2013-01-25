@@ -58,13 +58,13 @@ public class ConsoleLogFormatter extends Formatter {
 
     @Override
     public String format(final LogRecord record) {
-        // 0 = Server Timestamp, 1 = Level Name, 2 = Message, 3 = Level Value, 4 = Record Date
+        // 0 = Record Date, 1 = Level Name, 2 = Message, 3 = Level Value, 4 = Server Timestamp
         final String message = MessageFormat.format(AnsiColor.translate(this.pattern)
-                , this.stamp.format(record.getMillis())
+                , new Date(record.getMillis())
                 , this.formatLevel(record.getLevel())
                 , this.formatMessage(record)
                 , record.getLevel().intValue()
-                , new Date(record.getMillis())
+                , this.stamp.format(record.getMillis())
         );
 
         StringWriter trace = null;
