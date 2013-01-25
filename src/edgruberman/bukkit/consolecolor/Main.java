@@ -52,7 +52,7 @@ public final class Main extends CustomPlugin {
         this.handler = cb.consoleHandler();
         this.original = this.handler.getFormatter();
         final ConsoleLogFormatter custom = new ConsoleLogFormatter(Main.courier.translate("pattern")
-                , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"), this.original);
+                , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"), this.original, this);
 
         // load level patterns from config
         final ConfigurationSection levels = this.getConfig().getConfigurationSection("levels");

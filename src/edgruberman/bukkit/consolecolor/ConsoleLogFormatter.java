@@ -13,6 +13,10 @@ import java.util.logging.LogRecord;
 
 import org.bukkit.craftbukkit.libs.joptsimple.OptionException;
 import org.bukkit.craftbukkit.libs.joptsimple.OptionSet;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+
+import edgruberman.bukkit.consolecolor.util.CustomLevel;
 
 public class ConsoleLogFormatter extends Formatter {
 
@@ -46,12 +50,14 @@ public class ConsoleLogFormatter extends Formatter {
     private final SimpleDateFormat stamp;
     private final boolean showCodes;
     private final Formatter original;
+    private final Plugin plugin;
 
-    public ConsoleLogFormatter(final String pattern, final SimpleDateFormat stamp, final boolean showCodes, final Formatter original) {
+    public ConsoleLogFormatter(final String pattern, final SimpleDateFormat stamp, final boolean showCodes, final Formatter original, final Plugin plugin) {
         this.pattern = new MessageFormat(AnsiColor.translate(pattern));
         this.stamp = stamp;
         this.showCodes = showCodes;
         this.original = original;
+        this.plugin = plugin;
         this.putLevel(ConsoleLogFormatter.LEVEL_DEFAULT, ConsoleLogFormatter.DEFAULT_LEVEL_PATTERN);
     }
 
@@ -77,10 +83,9 @@ public class ConsoleLogFormatter extends Formatter {
             message.write(this.pattern.format(arguments));
             message.write("\n");
         } catch (final Exception e) {
-            message.write("    [ConsoleColor] Using original formatter due to error: ");
-            message.write(e.toString());
-            message.write("\n");
-            message.write(this.original.format(record));
+            message.write(this.describeException(e));
+            this.debug(message, arguments, e);
+            message.write(this.originalFormat(record));
             return message.toString();
         }
 
@@ -100,6 +105,35 @@ public class ConsoleLogFormatter extends Formatter {
     private String formatLevel(final Level level) {
         final MessageFormat levelPattern = this.levels.get(( this.levels.containsKey(level) ? level : null ));
         return levelPattern.format(new Object[] { level.getLocalizedName() });
+    }
+
+    private String describeException(final Exception e) {
+        final LogRecord description = new LogRecord(Level.SEVERE, "[{0}] Error formatting log record (check pattern); {1}");
+        return this.originalFormat(description, ConsoleLogFormatter.prefix(this.plugin), e.toString());
+    }
+
+    private void debug(final StringWriter message, final Object[] arguments, final Exception e) {
+        if (!(e instanceof IllegalArgumentException) || !this.plugin.getLogger().isLoggable(CustomLevel.DEBUG)) return;
+
+        final String prefix = ConsoleLogFormatter.prefix(this.plugin);
+
+        final LogRecord details = new LogRecord(CustomLevel.DEBUG, "[{0}] pattern: {1}");
+        message.write(this.originalFormat(details, prefix, this.pattern.toPattern()));
+
+        for (int i = 0; i < arguments.length; i++) {
+            final LogRecord arg = new LogRecord(CustomLevel.DEBUG, "[{0}] argument '{'{1}} {2}: {3}");
+            message.write(this.originalFormat(arg, prefix, i, arguments[i].getClass().getName(), arguments[i].toString()));
+        }
+    }
+
+    private String originalFormat(final LogRecord record, final Object... parameters) {
+        record.setParameters(parameters);
+        return this.original.format(record);
+    }
+
+    private static String prefix(final Plugin plugin) {
+        final PluginDescriptionFile pdf = plugin.getDescription();
+        return ( pdf.getPrefix() != null ? pdf.getPrefix() : pdf.getName() );
     }
 
 }
