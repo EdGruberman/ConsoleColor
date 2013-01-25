@@ -11,7 +11,6 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.libs.joptsimple.OptionException;
 import org.bukkit.craftbukkit.libs.joptsimple.OptionSet;
 
@@ -46,13 +45,11 @@ public class ConsoleLogFormatter extends Formatter {
     private final MessageFormat pattern;
     private final SimpleDateFormat stamp;
     private final boolean showCodes;
-    private final char formatCode;
 
-    public ConsoleLogFormatter(final String pattern, final SimpleDateFormat stamp, final boolean showCodes, final char formatCode) {
-        this.pattern = new MessageFormat(AnsiColor.translate(ChatColor.translateAlternateColorCodes(formatCode, pattern)));
+    public ConsoleLogFormatter(final String pattern, final SimpleDateFormat stamp, final boolean showCodes) {
+        this.pattern = new MessageFormat(AnsiColor.translate(pattern));
         this.stamp = stamp;
         this.showCodes = showCodes;
-        this.formatCode = formatCode;
         this.levelPatterns.put(null, ConsoleLogFormatter.DEFAULT_LEVEL_PATTERN);
     }
 
@@ -85,7 +82,7 @@ public class ConsoleLogFormatter extends Formatter {
     /** @throws IllegalArgumentException if name is not valid (same as {@link java.util.logging.Level#parse(String)}) */
     public void putLevelPattern(final String name, final String pattern) {
         final Level level = ( name.equals(ConsoleLogFormatter.LEVEL_DEFAULT) ? null : Level.parse(name) );
-        this.levelPatterns.put(( level == null ? null : level ), ChatColor.translateAlternateColorCodes(this.formatCode, pattern));
+        this.levelPatterns.put(( level == null ? null : level ), pattern);
     }
 
     private String formatLevel(final Level level) {

@@ -49,15 +49,15 @@ public final class Main extends CustomPlugin {
         this.reloadConfig();
         Main.courier = ConfigurationCourier.Factory.create(this).setFormatCode("format-code").build();
 
-        final ConsoleLogFormatter custom = new ConsoleLogFormatter(this.getConfig().getString("pattern")
-                , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"), this.getConfig().getString("format-code").charAt(0));
+        final ConsoleLogFormatter custom = new ConsoleLogFormatter(Main.courier.translate("pattern")
+                , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"));
 
         // load level patterns from config
         final ConfigurationSection levels = this.getConfig().getConfigurationSection("levels");
         if (levels != null)
             for (final String name : levels.getKeys(false))
                 try {
-                    custom.putLevelPattern(name, levels.getString(name));
+                    custom.putLevelPattern(name, Main.courier.translate("levels." + name));
                 } catch (final Exception e) {
                     this.getLogger().log(Level.WARNING, "Discarded pattern for unrecognized logger in levels: {0}; {1}", new Object[] { name, e });
                 }
