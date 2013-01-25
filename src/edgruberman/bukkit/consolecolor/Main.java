@@ -57,7 +57,7 @@ public final class Main extends CustomPlugin {
         if (levels != null)
             for (final String name : levels.getKeys(false))
                 try {
-                    custom.putLevelPattern(name, Main.courier.translate("levels." + name));
+                    custom.putLevel(name, Main.courier.translate("levels." + name));
                 } catch (final Exception e) {
                     this.getLogger().log(Level.WARNING, "Discarded pattern for unrecognized logger in levels: {0}; {1}", new Object[] { name, e });
                 }

@@ -41,7 +41,7 @@ public class ConsoleLogFormatter extends Formatter {
 
     // ---- instance ----
 
-    private final Map<Level, String> levelPatterns = new HashMap<Level, String>();
+    private final Map<Level, MessageFormat> levels = new HashMap<Level, MessageFormat>();
     private final MessageFormat pattern;
     private final SimpleDateFormat stamp;
     private final boolean showCodes;
@@ -50,7 +50,13 @@ public class ConsoleLogFormatter extends Formatter {
         this.pattern = new MessageFormat(AnsiColor.translate(pattern));
         this.stamp = stamp;
         this.showCodes = showCodes;
-        this.levelPatterns.put(null, ConsoleLogFormatter.DEFAULT_LEVEL_PATTERN);
+        this.putLevel(ConsoleLogFormatter.LEVEL_DEFAULT, ConsoleLogFormatter.DEFAULT_LEVEL_PATTERN);
+    }
+
+    /** @throws IllegalArgumentException if name is not valid (same as {@link java.util.logging.Level#parse(String)}) */
+    public void putLevel(final String name, final String pattern) {
+        final Level level = ( name.equals(ConsoleLogFormatter.LEVEL_DEFAULT) ? null : Level.parse(name) );
+        this.levels.put(level, new MessageFormat(AnsiColor.translate(pattern)));
     }
 
     @Override
@@ -63,15 +69,17 @@ public class ConsoleLogFormatter extends Formatter {
               , record.getLevel().intValue()
               , this.stamp.format(record.getMillis())
         };
-        final String message = this.pattern.format(arguments);
 
-        StringWriter trace = null;
+        final StringWriter message = new StringWriter();
+        message.write(this.pattern.format(arguments));
+        message.write("\n");
+
         if (record.getThrown() != null) {
-            trace = new StringWriter();
-            record.getThrown().printStackTrace(new PrintWriter(trace));
+            record.getThrown().printStackTrace(new PrintWriter(message));
+            message.write("\n");
         }
 
-        return message + "\n" + ( trace == null ? "" : trace );
+        return message.toString();
     }
 
     @Override
@@ -79,15 +87,9 @@ public class ConsoleLogFormatter extends Formatter {
         return AnsiColor.translate(super.formatMessage(record), ( this.showCodes ? "{0}$1" : "{0}" ));
     }
 
-    /** @throws IllegalArgumentException if name is not valid (same as {@link java.util.logging.Level#parse(String)}) */
-    public void putLevelPattern(final String name, final String pattern) {
-        final Level level = ( name.equals(ConsoleLogFormatter.LEVEL_DEFAULT) ? null : Level.parse(name) );
-        this.levelPatterns.put(( level == null ? null : level ), pattern);
-    }
-
     private String formatLevel(final Level level) {
-        final String levelPattern = (this.levelPatterns.get(( this.levelPatterns.containsKey(level) ? level : null )));
-        return AnsiColor.translate(MessageFormat.format(levelPattern, level.getLocalizedName().toUpperCase()));
+        final MessageFormat levelPattern = this.levels.get(( this.levels.containsKey(level) ? level : null ));
+        return levelPattern.format(new Object[] { level.getLocalizedName() });
     }
 
 }
