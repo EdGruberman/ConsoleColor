@@ -1,5 +1,6 @@
 package edgruberman.bukkit.consolecolor;
 
+import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -9,7 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import edgruberman.bukkit.consolecolor.commands.Reload;
 import edgruberman.bukkit.consolecolor.craftbukkit.CraftBukkit;
-import edgruberman.bukkit.consolecolor.messaging.ConfigurationCourier;
+import edgruberman.bukkit.consolecolor.messaging.Courier.ConfigurationCourier;
 import edgruberman.bukkit.consolecolor.util.CustomPlugin;
 
 public final class Main extends CustomPlugin {
@@ -47,11 +48,12 @@ public final class Main extends CustomPlugin {
 
         // standard plugin enable
         this.reloadConfig();
-        Main.courier = ConfigurationCourier.Factory.create(this).setFormatCode("format-code").build();
+        Main.courier = ConfigurationCourier.create(this).setFormatCode("format-code").build();
 
         this.handler = cb.consoleHandler();
         this.original = this.handler.getFormatter();
-        final ConsoleLogFormatter custom = new ConsoleLogFormatter(Main.courier.translate("pattern")
+        final List<String> pattern = Main.courier.translate("pattern");
+        final ConsoleLogFormatter custom = new ConsoleLogFormatter(( pattern.size() >= 1 ? pattern.get(0) : "" )
                 , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"), this.original, this);
 
         // load level patterns from config
@@ -59,7 +61,8 @@ public final class Main extends CustomPlugin {
         if (levels != null)
             for (final String name : levels.getKeys(false))
                 try {
-                    custom.putLevel(name, Main.courier.translate("levels." + name));
+                    final List<String> patterns = Main.courier.translate("levels." + name);
+                    custom.putLevel(name, ( patterns.size() > 0 ? patterns.get(0) : "" ));
                 } catch (final Exception e) {
                     this.getLogger().log(Level.WARNING, "Discarded pattern for unrecognized logger in levels: {0}; {1}", new Object[] { name, e });
                 }
