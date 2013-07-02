@@ -3,14 +3,14 @@ package edgruberman.bukkit.consolecolor.craftbukkit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 
-import net.minecraft.server.v1_4_6.ConsoleLogManager;
-import net.minecraft.server.v1_4_6.MinecraftServer;
+import net.minecraft.server.v1_6_R1.ConsoleLogManager;
+import net.minecraft.server.v1_6_R1.MinecraftServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.libs.joptsimple.OptionSet;
-import org.bukkit.craftbukkit.v1_4_6.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
 
-public class CraftBukkit_v1_4_6 extends CraftBukkit {
+public class CraftBukkit_v1_6_R1 extends CraftBukkit {
 
     @Override
     public OptionSet options() {
