@@ -1,6 +1,6 @@
 package edgruberman.bukkit.consolecolor;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -48,21 +48,22 @@ public final class Main extends CustomPlugin {
 
         // standard plugin enable
         this.reloadConfig();
-        Main.courier = ConfigurationCourier.create(this).setFormatCode("format-code").build();
+        Main.courier = ConfigurationCourier.Factory.create(this).setFormatCode("format-code").build();
 
         this.handler = cb.consoleHandler();
         this.original = this.handler.getFormatter();
-        final List<String> pattern = Main.courier.translate("pattern");
-        final ConsoleLogFormatter custom = new ConsoleLogFormatter(( pattern.size() >= 1 ? pattern.get(0) : "" )
-                , ConsoleLogFormatter.stamp(cb.options()), this.getConfig().getBoolean("show-codes"), this.original, this);
+        final String patternLog = Main.courier.translate("pattern");
+        final SimpleDateFormat stamp = ConsoleLogFormatter.stamp(cb.options());
+        final boolean showCodes = this.getConfig().getBoolean("show-codes");
+        final ConsoleLogFormatter custom = new ConsoleLogFormatter(patternLog, stamp, showCodes, this.original, this);
 
         // load level patterns from config
         final ConfigurationSection levels = this.getConfig().getConfigurationSection("levels");
         if (levels != null)
             for (final String name : levels.getKeys(false))
                 try {
-                    final List<String> patterns = Main.courier.translate("levels." + name);
-                    custom.putLevel(name, ( patterns.size() > 0 ? patterns.get(0) : "" ));
+                    final String patternLevel = Main.courier.translate("levels." + name);
+                    custom.putLevel(name, patternLevel);
                 } catch (final Exception e) {
                     this.getLogger().log(Level.WARNING, "Discarded pattern for unrecognized logger in levels: {0}; {1}", new Object[] { name, e });
                 }
